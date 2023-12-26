@@ -15,8 +15,8 @@ export class HomeScene extends BaseScene{
         super(app, options);
 
         const grass = new Grass(this, {
-            width: 200,
-            depth: 200,
+            width: BASE_SIZE * 17,
+            depth: BASE_SIZE * 17,
             position: new Vector3(0, -1, 0),
         });
         this.addEntity(grass);
@@ -40,7 +40,7 @@ export class HomeScene extends BaseScene{
     }
 
     private updateCamera: UpdateHandler = (_: Game, __: number) => {
-        const CAMERA_OFFSET = new Vector3(80, 80, 32);
+        const CAMERA_OFFSET = new Vector3(-80, 80, -32);
         const TAGET_CURR_POSITION = this.player.mesh.position;
         this.camera.position = TAGET_CURR_POSITION.add(CAMERA_OFFSET);
         this.camera.setTarget(TAGET_CURR_POSITION);
