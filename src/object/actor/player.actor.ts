@@ -5,6 +5,7 @@ import { Game } from "../../app";
 import { BASE_SIZE } from "../../config";
 import { BaseScene } from "../../scene";
 import { Direction, IndependentCallback, StateMachine } from "../../types";
+import { Curve, CurveUtil } from "../../util";
 
 type PlayerStateMachineState = 'moving' | 'idle';
 type PlayerStateMachineTransition = 'move' | 'stop';
@@ -65,9 +66,13 @@ type PlayerOptions = {
 }
 
 export class Player extends Entity{
+    private static jumpVerticalDistanceCurve: Curve = CurveUtil.useParabolaCurve({
+        min: 0,
+        max: BASE_SIZE,
+    });
+
     private stateMachine: StateMachine<PlayerStateMachineState, PlayerStateMachineTransition>;
     private jumpCurrDistance: number = 0;
-
     private direction: Direction = 'top';
 
     constructor(scene: BaseScene, options?: PlayerOptions){
@@ -103,7 +108,7 @@ export class Player extends Entity{
             return;
         }
 
-        const MAX_DISTANCE_AVAILABLE = 0.1 * _delta;
+        const MAX_DISTANCE_AVAILABLE = 0.08 * _delta;
         const PENDING_DISTANCE_AVAILABLE = Math.min(MAX_DISTANCE_AVAILABLE, BASE_SIZE - this.jumpCurrDistance);
 
         if (this.direction === 'top' || this.direction === 'bottom'){
@@ -115,11 +120,10 @@ export class Player extends Entity{
         }
 
         this.jumpCurrDistance += PENDING_DISTANCE_AVAILABLE;
+        this.mesh.position.y = BASE_SIZE/2 + (Player.jumpVerticalDistanceCurve(this.jumpCurrDistance) * BASE_SIZE);
     }
 
     public update(_game: Game, _delta: number): void {
-        console.log(this.mesh.position);
-
         const { input: { keyboardHandler: io }} = _game;
         const CURRENT_STATE = this.stateMachine.state();
 
