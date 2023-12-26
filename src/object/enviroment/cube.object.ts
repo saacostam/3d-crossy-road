@@ -1,4 +1,4 @@
-import { Color3, Mesh, MeshBuilder, PhysicsImpostor, Scene, StandardMaterial, Vector3 } from "@babylonjs/core";
+import { Color3, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonjs/core";
 
 import { Entity } from "../base";
 import { Game } from "../../app";
@@ -12,8 +12,6 @@ type CubeOptions = {
 }
 
 export class Cube extends Entity{
-    public mesh: Mesh;
-
     constructor(scene: Scene, options?: CubeOptions){
         super(scene);
 
@@ -24,9 +22,7 @@ export class Cube extends Entity{
         this.mesh.position = options?.position ? options.position : Vector3.Zero();
 
         this.mesh.material = new StandardMaterial('CUBE-MATERIAL' , scene);
-        if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.Gray();
-
-        this.mesh.physicsImpostor = new PhysicsImpostor(this.mesh, PhysicsImpostor.BoxImpostor, { mass: 2 });
+        if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.Red();
     }
 
     update(game: Game, delta: number){
