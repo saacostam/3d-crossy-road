@@ -19,6 +19,6 @@ export class Grass extends Entity{
         this.mesh.position = options?.position ? options.position : Vector3.Zero();
 
         this.mesh.material = new StandardMaterial('GRASS-MATERIAL' , scene);
-        if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.Green();
+        if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.Gray();
     }
 }

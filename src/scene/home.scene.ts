@@ -2,7 +2,7 @@ import { DirectionalLight, FreeCamera, Vector3 } from "@babylonjs/core";
 
 import { Game } from "../app";
 import { BaseScene, BaseSceneOptions } from "./base.scene";
-import { Grass, Player, Stone } from "../object";
+import { Grass, Player, Stone, Tree } from "../object";
 import { UpdateHandler } from "../types";
 import { BASE_SIZE } from "../config";
 
@@ -10,7 +10,6 @@ type HomeSceneOptions = BaseSceneOptions;
 
 export class HomeScene extends BaseScene{
     private player: Player;
-    private stone: Stone;
 
     constructor(public app: Game, options?: HomeSceneOptions){
         super(app, options);
@@ -28,11 +27,17 @@ export class HomeScene extends BaseScene{
         });
         this.addEntity(this.player);
 
-        this.stone = new Stone(this, {
+        const stone = new Stone(this, {
             x: -2 * BASE_SIZE,
             z: 0,
         });
-        this.addEntity(this.stone);
+        this.addEntity(stone);
+
+        const tree = new Tree(this, {
+            x: 2 * BASE_SIZE,
+            z: 2 * BASE_SIZE,
+        });
+        this.addEntity(tree);
 
         this.camera = new FreeCamera(
             "HOME-CAMERA", 

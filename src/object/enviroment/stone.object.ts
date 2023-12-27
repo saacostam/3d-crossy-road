@@ -21,7 +21,7 @@ export class Stone extends Entity{
         this.mesh.position = new Vector3(options.x, SIZE/2, options.z);
 
         this.mesh.material = new StandardMaterial('STONE-MESH-MATERIAL', scene);
-        if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.Gray();
+        if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.Random();
 
         this.collisionType = 'static';
     }
