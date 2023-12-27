@@ -1,5 +1,6 @@
 import { Color3, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonjs/core";
 import { Entity } from "../base";
+import { BaseScene } from "../../scene";
 
 type GrassOptions = {
     width?: number;
@@ -8,7 +9,7 @@ type GrassOptions = {
 }
 
 export class Grass extends Entity{
-    constructor(scene: Scene, options?: GrassOptions){
+    constructor(scene: BaseScene, options?: GrassOptions){
         super(scene);
 
         this.mesh = MeshBuilder.CreateBox("GRASS-BOX", {

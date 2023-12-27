@@ -43,6 +43,7 @@ export class HomeScene extends BaseScene{
                 width: BASE_SIZE,
                 z: 0,
                 x: i * BASE_SIZE,
+                isEmpty: i <= 0,
             });
 
             this.addEntity(tile);

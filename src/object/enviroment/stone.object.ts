@@ -1,11 +1,12 @@
-import { Color3, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonjs/core";
+import { Color3, MeshBuilder, StandardMaterial, Vector3 } from "@babylonjs/core";
 
 import { Entity } from "..";
 import { BASE_SIZE } from "../../config";
 import { StaticEntityOptions } from "../../types";
+import { BaseScene } from "../../scene";
 
 export class Stone extends Entity{
-    constructor(scene: Scene, options: StaticEntityOptions){
+    constructor(scene: BaseScene, options: StaticEntityOptions){
         super(scene);
 
         const SIZE = BASE_SIZE*(3/4);

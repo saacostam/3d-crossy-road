@@ -27,13 +27,13 @@ export class BaseScene extends Scene{
     }
 
     update(delta: number){
-        this.entities.forEach( entity => entity.update(this.app, delta));
         this.entities.forEach( entity1 => this.entities.forEach( entity2 => {
             if (entity1 !== entity2 && entity1.collisionType !== 'none' && entity2.collisionType !== 'none' && entity1.mesh.intersectsMesh(entity2.mesh)){
                 entity1.onCollision(entity2, this.app);
                 entity2.onCollision(entity1, this.app);
             }
         }));
+        this.entities.forEach( entity => entity.update(this.app, delta));
         this.entities = this.entities.filter(entity => entity.isAlive);
     }
 

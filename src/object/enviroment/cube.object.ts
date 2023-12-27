@@ -2,6 +2,7 @@ import { Color3, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonj
 
 import { Entity } from "../base";
 import { Game } from "../../app";
+import { BaseScene } from "../../scene";
 
 type CubeOptions = {
     size?: number;
@@ -12,7 +13,7 @@ type CubeOptions = {
 }
 
 export class Cube extends Entity{
-    constructor(scene: Scene, options?: CubeOptions){
+    constructor(scene: BaseScene, options?: CubeOptions){
         super(scene);
 
         this.mesh = MeshBuilder.CreateBox("CUBE-BOX", {
