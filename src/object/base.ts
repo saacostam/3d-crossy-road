@@ -1,15 +1,20 @@
 import { Mesh, Scene } from "@babylonjs/core";
 
 import { Game } from "../app";
+import { CollisionType } from "../types";
 
 export class Entity {
     public _mesh: Mesh;
     public isAlive: boolean = true;
+    public collisionType: CollisionType = 'none';
+
     constructor(public scene: Scene){
         this._mesh = new Mesh('BASE-MESH');
     }
 
-    update(_game: Game, _delta: number){}
+    public update(_game: Game, _delta: number){}
+
+    public onCollision(_other: Entity, _game: Game){}
     
     kill(){
         this.isAlive = false;

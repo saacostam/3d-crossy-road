@@ -23,6 +23,8 @@ export class Cube extends Entity{
 
         this.mesh.material = new StandardMaterial('CUBE-MATERIAL' , scene);
         if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.Red();
+
+        this.collisionType = 'static';
     }
 
     update(game: Game, delta: number){

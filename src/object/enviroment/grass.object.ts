@@ -1,4 +1,4 @@
-import { Color3, Mesh, MeshBuilder, PhysicsImpostor, Scene, StandardMaterial, Vector3 } from "@babylonjs/core";
+import { Color3, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonjs/core";
 import { Entity } from "../base";
 
 type GrassOptions = {
@@ -8,8 +8,6 @@ type GrassOptions = {
 }
 
 export class Grass extends Entity{
-    public mesh: Mesh;
-
     constructor(scene: Scene, options?: GrassOptions){
         super(scene);
 
@@ -22,7 +20,5 @@ export class Grass extends Entity{
 
         this.mesh.material = new StandardMaterial('GRASS-MATERIAL' , scene);
         if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.Green();
-
-        this.mesh.physicsImpostor = new PhysicsImpostor(this.mesh, PhysicsImpostor.BoxImpostor, { mass: 0 });
     }
 }

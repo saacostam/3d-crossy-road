@@ -10,3 +10,5 @@ export type StateMachine<S, T> = {
     transition: (transition: T) => void;
     registerCallback: (state: S, independentCallback: IndependentCallback) => void;
 }
+
+export type CollisionType = 'static' | 'platform' | 'none' | 'dynamic';
