@@ -34,7 +34,9 @@ export class Tile extends Entity{
         this.width = options.width;
         this.depth = options.depth;
 
-        if (this.isEmpty || this.tileType !== 'river'){
+        if (this.isEmpty) this.tileType = 'empty';
+
+        if (this.tileType !== 'river'){
             this.mesh = MeshBuilder.CreateBox('TILE-MESH', {
                 width: this.width,
                 height: BASE_SIZE,

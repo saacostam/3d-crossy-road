@@ -109,7 +109,7 @@ export class Player extends Entity{
 
     private handleIdle(_game: Game, _delta: number){
         const metaTile = this.tiledSceneNavigator?.getClosestTile(this._mesh.position._x, this.depth);
-        if (metaTile?.tile.collisionType === 'dynamic') _game.engine.stopRenderLoop();
+        if (metaTile?.tile.collisionType === 'dynamic' && metaTile.x > 0) _game.engine.stopRenderLoop();
     }
 
     public onCollision(_other: Entity, _game: Game): void {
@@ -128,6 +128,8 @@ export class Player extends Entity{
     }
 
     public update(_game: Game, _delta: number): void {
+        if (_game.engine.getFps() === Infinity) return;
+
         const { input: { keyboardHandler: io }} = _game;
         const CURRENT_STATE = this.stateMachine.state();
 
