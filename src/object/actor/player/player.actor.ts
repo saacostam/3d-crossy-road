@@ -3,7 +3,8 @@ import { Color3, MeshBuilder, StandardMaterial, Vector3 } from "@babylonjs/core"
 import { Entity } from "../..";
 import { Game } from "../../../app";
 import { BASE_SIZE } from "../../../config";
-import { BaseScene } from "../../../scene";
+import { TiledSceneNavigator } from "../../../handler";
+import { BaseScene, HomeScene } from "../../../scene";
 import { Direction, StateMachine } from "../../../types";
 import { Curve, CurveUtil } from "../../../util";
 
@@ -23,16 +24,29 @@ export class Player extends Entity{
     private stateMachine: StateMachine<PlayerStateMachineState, PlayerStateMachineTransition>;
     private jumpCurrDistance: number = 0;
     private direction: Direction = 'top';
+    private depth: number;
+    private height: number;
+
+    private platform: Entity | undefined;
+    private platformCenterOffset: Vector3 | undefined;
+    private tiledSceneNavigator: TiledSceneNavigator | undefined;
+
+    public scene: BaseScene;
 
     constructor(scene: BaseScene, options?: PlayerOptions){
         super(scene);
+        this.scene = scene;
+
+        const SIZE = options?.size ? options.size : BASE_SIZE;
 
         this.mesh = MeshBuilder.CreateBox(
             'PLAYER-MESH', 
             {
-                size: options?.size ? options.size : BASE_SIZE,
+                size: SIZE,
             }
         );
+        this.height = SIZE;
+        this.depth = SIZE;
 
         if (options?.position) this.mesh.position = options.position;
 
@@ -51,6 +65,7 @@ export class Player extends Entity{
         });
 
         this.collisionType = 'dynamic';
+        if (scene instanceof HomeScene) this.tiledSceneNavigator = new TiledSceneNavigator(scene);
     }
 
     private updateJump(_game: Game, _delta: number){
@@ -76,7 +91,6 @@ export class Player extends Entity{
             const PENDING_DISTANCE_AVAILABLE = Math.min(MAX_DISTANCE_AVAILABLE, BASE_SIZE - this.jumpCurrDistance)
     
             this.mesh.position[DIRECTION] += PENDING_DISTANCE_AVAILABLE * MODIFIER;
-    
             this.jumpCurrDistance += PENDING_DISTANCE_AVAILABLE;
         }else if (CURR_STATE === 'moving-back'){
             const PENDING_DISTANCE_AVAILABLE = Math.min(MAX_DISTANCE_AVAILABLE, this.jumpCurrDistance);
@@ -86,19 +100,42 @@ export class Player extends Entity{
             this.jumpCurrDistance -= PENDING_DISTANCE_AVAILABLE;
         }
 
-        this.mesh.position.y = BASE_SIZE/2 + (Player.jumpVerticalDistanceCurve(this.jumpCurrDistance) * BASE_SIZE);
+        this.mesh.position.y = (this.height/2) + (Player.jumpVerticalDistanceCurve(this.jumpCurrDistance) * BASE_SIZE);
+    }
+
+    private updatePlatform(_game: Game, _delta: number){
+        if (this.platform && this.platformCenterOffset) this._mesh.position = this.platform._mesh.position.add(this.platformCenterOffset);
+    }
+
+    private handleIdle(_game: Game, _delta: number){
+        const metaTile = this.tiledSceneNavigator?.getClosestTile(this._mesh.position._x, this.depth);
+        if (metaTile?.tile.collisionType === 'dynamic' && metaTile.x > 0) _game.engine.stopRenderLoop();
     }
 
     public onCollision(_other: Entity, _game: Game): void {
+        if (_game.engine.getFps() === Infinity) return;
+
         if (_other.collisionType === 'static') this.stateMachine.transition('move-back');
+        if (_other.collisionType === 'dynamic') _game.engine.stopRenderLoop();
+        if (_other.collisionType === 'platform') {
+            if (this.stateMachine.state() === 'idle'){
+                this.platform = _other;
+                this.platformCenterOffset = this._mesh.position.subtract(_other._mesh.position);
+            }
+
+            this.stateMachine.transition('bind-to-platform');
+        };
     }
 
     public update(_game: Game, _delta: number): void {
+        if (_game.engine.getFps() === Infinity) return;
+
         const { input: { keyboardHandler: io }} = _game;
         const CURRENT_STATE = this.stateMachine.state();
 
         switch (CURRENT_STATE){
             case 'idle':
+            case 'on-platform':
                 if (io.wasPressedOnce('ArrowUp') || io.wasPressedOnce(' ')){
                     this.direction = 'top';
                     this.stateMachine.transition('move');
@@ -114,6 +151,9 @@ export class Player extends Entity{
                     this.direction = 'left';
                     this.stateMachine.transition('move');
                 }
+
+                if (CURRENT_STATE === 'on-platform') this.updatePlatform(_game, _delta);
+                if (CURRENT_STATE === 'idle') this.handleIdle(_game, _delta);
 
                 break;
             case 'moving':

@@ -1,7 +1,7 @@
 import { IndependentCallback, StateMachine } from "../../../types";
 
-export type PlayerStateMachineState = 'moving' | 'idle' | 'moving-back';
-export type PlayerStateMachineTransition = 'move' | 'stop' | 'move-back';
+export type PlayerStateMachineState = 'moving' | 'idle' | 'moving-back' | 'on-platform';
+export type PlayerStateMachineTransition = 'move' | 'stop' | 'move-back' | 'bind-to-platform';
 
 export const getPlayerStateMachine = (): StateMachine<
     PlayerStateMachineState,
@@ -23,6 +23,9 @@ export const getPlayerStateMachine = (): StateMachine<
                         case 'stop':
                             currentState = 'idle';
                             break;
+                        case 'bind-to-platform':
+                            currentState = 'on-platform';
+                            break;
                         case 'move-back':
                             break;
                     }
@@ -37,6 +40,9 @@ export const getPlayerStateMachine = (): StateMachine<
                             break;
                         case 'move-back':
                             currentState = 'moving-back';
+                            break;
+                        case 'bind-to-platform':
+                            break;
                     }
                     break;
                 case 'moving-back':
@@ -48,9 +54,22 @@ export const getPlayerStateMachine = (): StateMachine<
                             currentState = 'moving-back';
                             break;
                         case 'move':
+                        case 'bind-to-platform':
                             break;
                     }
                     break;
+                case 'on-platform':
+                    switch (transition){
+                        case 'stop':
+                            currentState = 'idle';
+                            break;
+                        case 'move':
+                            currentState = 'moving';
+                            break;
+                        case 'move-back':
+                        case 'bind-to-platform':
+                            break;
+                    }
             }
 
             const CURR_STATE = currentState;
