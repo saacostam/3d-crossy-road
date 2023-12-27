@@ -24,6 +24,7 @@ export const getPlayerStateMachine = (): StateMachine<
                             currentState = 'idle';
                             break;
                         case 'move-back':
+                            currentState = 'moving-back';
                             break;
                     }
                     break;

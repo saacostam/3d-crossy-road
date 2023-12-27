@@ -39,6 +39,7 @@ export class BaseScene extends Scene{
 
     addEntity(entity: Entity){
         this.entities.push(entity);
+        entity.onEnterScene(this);
     }
 
     public set camera(newCamera: FreeCamera){

@@ -2,7 +2,7 @@ import { DirectionalLight, FreeCamera, Vector3 } from "@babylonjs/core";
 
 import { Game } from "../app";
 import { BaseScene, BaseSceneOptions } from "./base.scene";
-import { Grass, Player, Stone, Tree } from "../object";
+import { Player, Tile } from "../object";
 import { UpdateHandler } from "../types";
 import { BASE_SIZE } from "../config";
 
@@ -14,30 +14,13 @@ export class HomeScene extends BaseScene{
     constructor(public app: Game, options?: HomeSceneOptions){
         super(app, options);
 
-        const grass = new Grass(this, {
-            width: BASE_SIZE * 17,
-            depth: BASE_SIZE * 17,
-            position: new Vector3(0, -1, 0),
-        });
-        this.addEntity(grass);
-
         this.player = new Player(this, {
             position: new Vector3(0, BASE_SIZE/4, 0),
             size: BASE_SIZE/2,
         });
         this.addEntity(this.player);
 
-        const stone = new Stone(this, {
-            x: -2 * BASE_SIZE,
-            z: 0,
-        });
-        this.addEntity(stone);
-
-        const tree = new Tree(this, {
-            x: 2 * BASE_SIZE,
-            z: 2 * BASE_SIZE,
-        });
-        this.addEntity(tree);
+        this.setUpInitialTiles();
 
         this.camera = new FreeCamera(
             "HOME-CAMERA", 
@@ -50,6 +33,21 @@ export class HomeScene extends BaseScene{
             new Vector3(-1, -1, 1),
             this,
         )
+    }
+
+    private setUpInitialTiles(){
+        const NUMBER_OF_TILES_ON_EACH_SIDE_FROM_ORIGIN = 5;
+        for (let i = -NUMBER_OF_TILES_ON_EACH_SIDE_FROM_ORIGIN; i < NUMBER_OF_TILES_ON_EACH_SIDE_FROM_ORIGIN * 2; i ++){
+            const tile = new Tile(this, {
+                depth: BASE_SIZE * 16,
+                width: BASE_SIZE,
+                z: 0,
+                x: i * BASE_SIZE,
+            });
+
+            this.addEntity(tile);
+        }
+
     }
 
     private updateCamera: UpdateHandler = (_: Game, __: number) => {

@@ -15,6 +15,8 @@ export class Entity {
     public update(_game: Game, _delta: number){}
 
     public onCollision(_other: Entity, _game: Game){}
+
+    public onEnterScene(_scene: Scene){}
     
     kill(){
         this.isAlive = false;

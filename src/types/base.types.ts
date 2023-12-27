@@ -12,3 +12,8 @@ export type StateMachine<S, T> = {
 }
 
 export type CollisionType = 'static' | 'platform' | 'none' | 'dynamic';
+
+export type StaticEntityOptions = {
+    x: number;
+    z: number;
+}
