@@ -1,4 +1,4 @@
-import { Color3, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonjs/core";
+import { Color3, MeshBuilder, StandardMaterial, Vector3 } from "@babylonjs/core";
 import { Entity } from "../base";
 import { BaseScene } from "../../scene";
 

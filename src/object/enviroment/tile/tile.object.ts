@@ -1,11 +1,14 @@
 import { Color3, MeshBuilder, StandardMaterial, Vector3 } from "@babylonjs/core";
 
 import { Entity } from "../..";
+import { Game } from "../../../app";
 import { BASE_SIZE } from "../../../config";
 import { BaseScene } from "../../../scene";
+
 import { TileFactoryType, TileFactoryTypeArray } from "./factory.type";
 import { NatureTileFactory } from "./nature.factory";
 import { EmptyTileFactory } from "./empty.factory";
+import { TrackTileFactory } from "./track.factory";
 
 type TileOptions = {
     x: number;
@@ -18,7 +21,10 @@ type TileOptions = {
 export class Tile extends Entity{
     public width: number;
     public depth: number;
+
+    private objects: Entity[] = [];
     private isEmpty: boolean;
+    private tileType: TileFactoryType = TileFactoryTypeArray[Math.floor(TileFactoryTypeArray.length * Math.random())];
 
     constructor(scene: BaseScene, options: TileOptions){
         super(scene);
@@ -45,18 +51,21 @@ export class Tile extends Entity{
     }
 
     public onEnterScene(_scene: BaseScene): void {
-        const N_ENTITIES_TO_ADD = Math.floor(2 * Math.random());
-        let ENTITIES_TO_ADD: Entity[] = [];
-
-        const TILE_TYPE: TileFactoryType = TileFactoryTypeArray[Math.floor(TileFactoryTypeArray.length * Math.random())];
+        const N_ENTITIES_TO_ADD = Math.floor(5 * Math.random());
 
         const TileFactory = this.isEmpty
             ? EmptyTileFactory
-            : TILE_TYPE === 'nature'
+            : this.tileType === 'nature'
             ? NatureTileFactory
-            : EmptyTileFactory;
+            : this.tileType === 'track'
+            ? TrackTileFactory
+            : NatureTileFactory;
 
-        ENTITIES_TO_ADD = TileFactory(_scene, N_ENTITIES_TO_ADD, this);
-        ENTITIES_TO_ADD.forEach(entity => _scene.addEntity(entity));
+        this.objects = TileFactory(_scene, N_ENTITIES_TO_ADD, this);
+        this.objects.forEach(entity => _scene.addEntity(entity));
+    }
+
+    public update(_game: Game, _delta: number): void {
+        this.objects.forEach(entity => entity.update(_game, _delta));
     }
 }

@@ -99,7 +99,7 @@ export class Player extends Entity{
 
         switch (CURRENT_STATE){
             case 'idle':
-                if (io.wasPressedOnce('ArrowUp')){
+                if (io.wasPressedOnce('ArrowUp') || io.wasPressedOnce(' ')){
                     this.direction = 'top';
                     this.stateMachine.transition('move');
                 }else if (io.wasPressedOnce('ArrowDown')){
