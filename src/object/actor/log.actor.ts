@@ -6,7 +6,9 @@ import { BaseScene } from "../../scene";
 import { Game } from "../../app";
 import { PathMap, PathUtil } from "../../util";
 
-type LogOptions = DynamicEntityOptions & {};
+type LogOptions = DynamicEntityOptions & {
+    velocity: number;
+};
 
 export class Log extends Entity{
     private direction: Direction;
@@ -14,6 +16,7 @@ export class Log extends Entity{
     private end: Vector3;
     private pathProgress: number;
 
+    private velocity: number;
     private pathMap: PathMap;
 
     constructor(scene: BaseScene, options: LogOptions){
@@ -35,6 +38,7 @@ export class Log extends Entity{
         this.end = options.end;
         this.pathProgress = Math.random();
 
+        this.velocity = options.velocity;
         this.pathMap = PathUtil.useLinearPath({
             start: this.start,
             end: this.end,
@@ -45,7 +49,7 @@ export class Log extends Entity{
 
     public update(_game: Game, _delta: number): void {
         const MODIFIER = (this.direction === 'right') ? 1 : -1;
-        const DELTA_MOVEMENT = 0.00007 * _delta * MODIFIER;
+        const DELTA_MOVEMENT = this.velocity * _delta * MODIFIER;
         this.pathProgress = ((this.pathProgress + DELTA_MOVEMENT * MODIFIER) + 1) % 1;
 
         this._mesh.position = this.pathMap(this.pathProgress);

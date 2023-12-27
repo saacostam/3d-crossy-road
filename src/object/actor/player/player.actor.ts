@@ -96,9 +96,7 @@ export class Player extends Entity{
     }
 
     private updatePlatform(_game: Game, _delta: number){
-        if (this.platform && this.platformCenterOffset){
-            this._mesh.position = this.platform._mesh.position.add(this.platformCenterOffset);
-        }
+        if (this.platform && this.platformCenterOffset) this._mesh.position = this.platform._mesh.position.add(this.platformCenterOffset);
     }
 
     public onCollision(_other: Entity, _game: Game): void {

@@ -15,6 +15,7 @@ export const RiverTileFactory: TileFactory = (scene: BaseScene, _: number, tile:
     const factoryEntityProducts: Entity[] = [];
 
     const direction: Direction = Math.random() < 0.5 ? 'right' : 'left';
+    const velocity = Math.random() < 0.5 ? 0.00007 : 0.00009;
 
     const MIN = tile._mesh.position.z - tile.depth/2;
     const MAX = tile._mesh.position.z + tile.depth/2;
@@ -34,6 +35,7 @@ export const RiverTileFactory: TileFactory = (scene: BaseScene, _: number, tile:
         width: SIZE,
         depth: SIZE*4,
         height: HEIGHT,
+        velocity: velocity,
     });
 
     factoryEntityProducts.push(entity);
