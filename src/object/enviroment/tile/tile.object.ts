@@ -50,6 +50,8 @@ export class Tile extends Entity{
 
         this._mesh.material = new StandardMaterial('TILE-MESH-MATERIAL', scene);
         if (this._mesh.material instanceof StandardMaterial) this._mesh.material.diffuseColor = Color3.Random();
+
+        this.collisionType = (this.tileType === 'river') ? 'dynamic' : 'none';
     }
 
     public onEnterScene(_scene: BaseScene): void {

@@ -1,5 +1,6 @@
 import { Vector3 } from "@babylonjs/core";
 import { Game } from "../app";
+import { Tile } from "../object";
 
 export type Direction = 'top' | 'bottom' | 'right' | 'left';
 
@@ -27,4 +28,9 @@ export type DynamicEntityOptions = {
     width: number;
     height: number;
     depth: number;
+}
+
+export type MetaTile = {
+    tile: Tile,
+    x: number;
 }
