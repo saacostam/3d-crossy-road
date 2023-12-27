@@ -23,16 +23,23 @@ export class Player extends Entity{
     private stateMachine: StateMachine<PlayerStateMachineState, PlayerStateMachineTransition>;
     private jumpCurrDistance: number = 0;
     private direction: Direction = 'top';
+    private height: number;
+
+    private platform: Entity | undefined;
+    private platformCenterOffset: Vector3 | undefined;
 
     constructor(scene: BaseScene, options?: PlayerOptions){
         super(scene);
 
+        const SIZE = options?.size ? options.size : BASE_SIZE;
+
         this.mesh = MeshBuilder.CreateBox(
             'PLAYER-MESH', 
             {
-                size: options?.size ? options.size : BASE_SIZE,
+                size: SIZE,
             }
         );
+        this.height = SIZE;
 
         if (options?.position) this.mesh.position = options.position;
 
@@ -76,7 +83,6 @@ export class Player extends Entity{
             const PENDING_DISTANCE_AVAILABLE = Math.min(MAX_DISTANCE_AVAILABLE, BASE_SIZE - this.jumpCurrDistance)
     
             this.mesh.position[DIRECTION] += PENDING_DISTANCE_AVAILABLE * MODIFIER;
-    
             this.jumpCurrDistance += PENDING_DISTANCE_AVAILABLE;
         }else if (CURR_STATE === 'moving-back'){
             const PENDING_DISTANCE_AVAILABLE = Math.min(MAX_DISTANCE_AVAILABLE, this.jumpCurrDistance);
@@ -86,11 +92,28 @@ export class Player extends Entity{
             this.jumpCurrDistance -= PENDING_DISTANCE_AVAILABLE;
         }
 
-        this.mesh.position.y = BASE_SIZE/2 + (Player.jumpVerticalDistanceCurve(this.jumpCurrDistance) * BASE_SIZE);
+        this.mesh.position.y = (this.height/2) + (Player.jumpVerticalDistanceCurve(this.jumpCurrDistance) * BASE_SIZE);
+    }
+
+    private updatePlatform(_game: Game, _delta: number){
+        if (this.platform && this.platformCenterOffset){
+            this._mesh.position = this.platform._mesh.position.add(this.platformCenterOffset);
+        }
     }
 
     public onCollision(_other: Entity, _game: Game): void {
+        if (_game.engine.getFps() === Infinity) return;
+
         if (_other.collisionType === 'static') this.stateMachine.transition('move-back');
+        if (_other.collisionType === 'dynamic') _game.engine.stopRenderLoop();
+        if (_other.collisionType === 'platform') {
+            if (this.stateMachine.state() === 'idle'){
+                this.platform = _other;
+                this.platformCenterOffset = this._mesh.position.subtract(_other._mesh.position);
+            }
+
+            this.stateMachine.transition('bind-to-platform');
+        };
     }
 
     public update(_game: Game, _delta: number): void {
@@ -99,6 +122,7 @@ export class Player extends Entity{
 
         switch (CURRENT_STATE){
             case 'idle':
+            case 'on-platform':
                 if (io.wasPressedOnce('ArrowUp') || io.wasPressedOnce(' ')){
                     this.direction = 'top';
                     this.stateMachine.transition('move');
@@ -114,6 +138,8 @@ export class Player extends Entity{
                     this.direction = 'left';
                     this.stateMachine.transition('move');
                 }
+
+                if (CURRENT_STATE === 'on-platform') this.updatePlatform(_game, _delta);
 
                 break;
             case 'moving':

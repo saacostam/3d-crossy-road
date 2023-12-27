@@ -23,7 +23,6 @@ export type DynamicEntityOptions = {
     direction: Direction;
     start: Vector3;
     end: Vector3;
-    pathProgress: number;
 
     width: number;
     height: number;

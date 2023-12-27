@@ -9,6 +9,7 @@ import { TileFactoryType, TileFactoryTypeArray } from "./factory.type";
 import { NatureTileFactory } from "./nature.factory";
 import { EmptyTileFactory } from "./empty.factory";
 import { TrackTileFactory } from "./track.factory";
+import { RiverTileFactory } from "./river.factory";
 
 type TileOptions = {
     x: number;
@@ -29,14 +30,17 @@ export class Tile extends Entity{
     constructor(scene: BaseScene, options: TileOptions){
         super(scene);
 
+        this.isEmpty = !!options.isEmpty;
         this.width = options.width;
         this.depth = options.depth;
 
-        this.mesh = MeshBuilder.CreateBox('TILE-MESH', {
-            width: this.width,
-            height: BASE_SIZE,
-            depth: this.depth,
-        }, scene);
+        if (this.isEmpty || this.tileType !== 'river'){
+            this.mesh = MeshBuilder.CreateBox('TILE-MESH', {
+                width: this.width,
+                height: BASE_SIZE,
+                depth: this.depth,
+            }, scene);
+        }
 
         this._mesh.position = new Vector3(
             options.x,
@@ -46,8 +50,6 @@ export class Tile extends Entity{
 
         this._mesh.material = new StandardMaterial('TILE-MESH-MATERIAL', scene);
         if (this._mesh.material instanceof StandardMaterial) this._mesh.material.diffuseColor = Color3.Random();
-
-        this.isEmpty = !!options.isEmpty;
     }
 
     public onEnterScene(_scene: BaseScene): void {
@@ -59,6 +61,8 @@ export class Tile extends Entity{
             ? NatureTileFactory
             : this.tileType === 'track'
             ? TrackTileFactory
+            : this.tileType === 'river'
+            ? RiverTileFactory
             : NatureTileFactory;
 
         this.objects = TileFactory(_scene, N_ENTITIES_TO_ADD, this);

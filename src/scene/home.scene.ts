@@ -37,7 +37,7 @@ export class HomeScene extends BaseScene{
 
     private setUpInitialTiles(){
         const NUMBER_OF_TILES_ON_EACH_SIDE_FROM_ORIGIN = 5;
-        for (let i = -NUMBER_OF_TILES_ON_EACH_SIDE_FROM_ORIGIN; i < NUMBER_OF_TILES_ON_EACH_SIDE_FROM_ORIGIN * 2; i ++){
+        for (let i = -NUMBER_OF_TILES_ON_EACH_SIDE_FROM_ORIGIN; i < NUMBER_OF_TILES_ON_EACH_SIDE_FROM_ORIGIN * 5; i ++){
             const tile = new Tile(this, {
                 depth: BASE_SIZE * 16,
                 width: BASE_SIZE,
@@ -52,7 +52,7 @@ export class HomeScene extends BaseScene{
     }
 
     private updateCamera: UpdateHandler = (_: Game, __: number) => {
-        const CAMERA_OFFSET = new Vector3(-160, 160, -64);
+        const CAMERA_OFFSET = new Vector3(-90, 90, -32);
         const TARGET_CURR_POSITION = this.player.mesh.position.multiply(new Vector3(1, 0, 1));
         this.camera.position = TARGET_CURR_POSITION.add(CAMERA_OFFSET);
         this.camera.setTarget(TARGET_CURR_POSITION);

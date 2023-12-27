@@ -6,9 +6,9 @@ import { BaseScene } from "../../scene";
 import { Game } from "../../app";
 import { PathMap, PathUtil } from "../../util";
 
-type CarOptions = DynamicEntityOptions & {};
+type LogOptions = DynamicEntityOptions & {};
 
-export class Car extends Entity{
+export class Log extends Entity{
     private direction: Direction;
     private start: Vector3;
     private end: Vector3;
@@ -16,10 +16,10 @@ export class Car extends Entity{
 
     private pathMap: PathMap;
 
-    constructor(scene: BaseScene, options: CarOptions){
+    constructor(scene: BaseScene, options: LogOptions){
         super(scene);
 
-        this.mesh = MeshBuilder.CreateBox('CAR-MESH',{
+        this.mesh = MeshBuilder.CreateBox('LOG-MESH',{
             width: options.width,
             depth: options.depth,
             height: options.height,
@@ -27,7 +27,7 @@ export class Car extends Entity{
 
         this.mesh.position = options.start;
 
-        this.mesh.material = new StandardMaterial('CAR-MESH-MATERIAL', scene);
+        this.mesh.material = new StandardMaterial('LOG-MESH-MATERIAL', scene);
         if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.Random();
 
         this.direction = options.direction;
@@ -40,12 +40,12 @@ export class Car extends Entity{
             end: this.end,
         })
 
-        this.collisionType = 'dynamic';
+        this.collisionType = 'platform';
     }
 
     public update(_game: Game, _delta: number): void {
         const MODIFIER = (this.direction === 'right') ? 1 : -1;
-        const DELTA_MOVEMENT = 0.00015 * _delta * MODIFIER;
+        const DELTA_MOVEMENT = 0.00007 * _delta * MODIFIER;
         this.pathProgress = ((this.pathProgress + DELTA_MOVEMENT * MODIFIER) + 1) % 1;
 
         this._mesh.position = this.pathMap(this.pathProgress);
