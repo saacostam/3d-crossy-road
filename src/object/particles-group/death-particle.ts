@@ -5,18 +5,18 @@ import { Game } from "../../app";
 import { HomeScene } from "../../scene";
 import { BASE_SIZE } from "../../config";
 
-type ParticleOptions = {
+type DeathParticleOptions = {
     start: Vector3;
     TTL: number;
 }
 
-export class Particle extends Entity{
+export class DeathParticle extends Entity{
     private pointingTo: Vector3;
     
     private ttl: number;
     private life: number = 0;
 
-    constructor(scene: HomeScene, options: ParticleOptions){
+    constructor(scene: HomeScene, options: DeathParticleOptions){
         super(scene);
         this._mesh = MeshBuilder.CreateBox('PARTICLE-MESH', {
             size: BASE_SIZE/16,

@@ -1,5 +1,5 @@
 import { Vector3 } from "@babylonjs/core";
-import { Particle } from ".";
+import { DeathParticle } from ".";
 import { Entity } from "..";
 import { Game } from "../../app";
 import { HomeScene } from "../../scene";
@@ -20,7 +20,7 @@ export class DeathParticlesGroup extends Entity{
 
         const NUMBER_OF_PARTICLES = 20;
         for (let i = 0; i < NUMBER_OF_PARTICLES; i++){
-            const particle = new Particle(scene, {
+            const particle = new DeathParticle(scene, {
                 start: options.start,
                 TTL: DeathParticlesGroup.TTL,
             });

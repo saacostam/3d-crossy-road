@@ -12,8 +12,10 @@ export class Car extends Entity{
     private direction: Direction;
     private start: Vector3;
     private end: Vector3;
-    private pathProgress: number;
     private velocity: number;
+    
+    private pathProgress: number;
+    private previousPathProgress: number = 0;
 
     private width: number;
     private height: number;
@@ -43,7 +45,6 @@ export class Car extends Entity{
         this.collisionType = 'dynamic';
 
         // Mesh
-        const COLOR = Color3.Random();
         const WHEEL_COLOR = new Color3(0.15, 0.15, 0.15);
 
         this.mesh = MeshBuilder.CreateBox('CAR-MESH',{
@@ -53,7 +54,7 @@ export class Car extends Entity{
         }, scene);
         this.mesh.position = options.start;
         this.mesh.material = new StandardMaterial('CAR-MESH-MATERIAL', scene);
-        if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = COLOR;
+        if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.Random();
 
         // Mesh - Children
         const OUT_OF_SCENE = Vector3.Down().scale(30);
@@ -65,7 +66,7 @@ export class Car extends Entity{
         }, scene);
         roof.position = OUT_OF_SCENE;
         roof.material = new StandardMaterial('CAR-MESH-MATERIAL', scene);
-        if (roof.material instanceof StandardMaterial) roof.material.diffuseColor = COLOR; 
+        if (roof.material instanceof StandardMaterial) roof.material.diffuseColor = WHEEL_COLOR; 
         this.meshChildren.push({
             mesh: roof,
             anchorToParent: new Vector3(0, this.height/2, 0),
@@ -103,12 +104,17 @@ export class Car extends Entity{
         const DELTA_MOVEMENT = this.velocity * _delta * MODIFIER;
         this.pathProgress = ((this.pathProgress + DELTA_MOVEMENT * MODIFIER) + 1) % 1;
 
-        this._mesh.position = this.pathMap(this.pathProgress);
+        if ((this.direction === 'right') ? (this.pathProgress < this.previousPathProgress) : (this.pathProgress < this.previousPathProgress)){
+            if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.Random();
+        }
 
+        this._mesh.position = this.pathMap(this.pathProgress);
         this.meshChildren.forEach(
             ({mesh, anchorToParent}) => {
                 mesh.position = this._mesh.position.add(anchorToParent);
             }
         )
+
+        this.previousPathProgress = this.pathProgress;
     }
 }

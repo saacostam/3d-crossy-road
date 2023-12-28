@@ -12,10 +12,12 @@ const trackTileObjectsConstructors = [
 ]
 
 export const RiverTileFactory: TileFactory = (scene: BaseScene, amount: number, tile: Tile): Entity[] => {
+    amount = Math.max(2, amount);
+
     const factoryEntityProducts: Entity[] = [];
 
     const direction: Direction = Math.random() < 0.5 ? 'right' : 'left';
-    const velocity = 0.00007 + (Math.random() * 0.00005);
+    const velocity = 0.00005 + (Math.random() * 0.00003);
 
     const MIN = tile._mesh.position.z - tile.depth/2;
     const MAX = tile._mesh.position.z + tile.depth/2;

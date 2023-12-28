@@ -1,2 +1,2 @@
 export * from './death-particles.group';
-export * from './particle';
+export * from './death-particle';

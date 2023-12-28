@@ -32,8 +32,11 @@ export class Log extends Entity{
         if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = new Color3(0.6, 0.5, 0.3);
 
         this.direction = options.direction;
-        this.start = options.start;
-        this.end = options.end;
+
+        const MODIFIER = (this.direction === 'right') ? 1 : -1;
+
+        this.start = options.start.clone().add(new Vector3(0, 0, options.depth * -MODIFIER));
+        this.end = options.end.clone().add(new Vector3(0, 0, options.depth * MODIFIER));
         this.pathProgress = options.pathProgress;
 
         this.velocity = options.velocity;
