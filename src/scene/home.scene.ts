@@ -31,7 +31,7 @@ export class HomeScene extends BaseScene{
 
         this.light = new DirectionalLight(
             "HOME-LIGHT",
-            new Vector3(-1, -1, 1),
+            new Vector3(0.5, -1, -0.5),
             this,
         )
     }

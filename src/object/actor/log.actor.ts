@@ -31,7 +31,7 @@ export class Log extends Entity{
         this.mesh.position = options.start;
 
         this.mesh.material = new StandardMaterial('LOG-MESH-MATERIAL', scene);
-        if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.Random();
+        if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = new Color3(0.6, 0.5, 0.3);
 
         this.direction = options.direction;
         this.start = options.start;

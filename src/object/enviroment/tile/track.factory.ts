@@ -32,7 +32,7 @@ export const TrackTileFactory: TileFactory = (scene: BaseScene, _: number, tile:
         start: start,
         end: end,
         width: SIZE,
-        depth: SIZE*2,
+        depth: SIZE*3,
         height: HEIGHT,
     });
 

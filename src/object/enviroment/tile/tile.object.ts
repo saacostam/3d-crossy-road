@@ -31,18 +31,18 @@ export class Tile extends Entity{
         super(scene);
 
         this.isEmpty = !!options.isEmpty;
-        this.width = options.width;
-        this.depth = options.depth;
-
         if (this.isEmpty) this.tileType = 'empty';
 
-        if (this.tileType !== 'river'){
-            this.mesh = MeshBuilder.CreateBox('TILE-MESH', {
-                width: this.width,
-                height: BASE_SIZE,
-                depth: this.depth,
-            }, scene);
-        }
+        this.width = options.width;
+        this.depth = options.depth;
+        const height = (this.tileType === 'river') ? BASE_SIZE*7/8 : BASE_SIZE;
+
+
+        this.mesh = MeshBuilder.CreateBox('TILE-MESH', {
+            width: this.width,
+            height: height,
+            depth: this.depth,
+        }, scene);
 
         this._mesh.position = new Vector3(
             options.x,
@@ -51,13 +51,18 @@ export class Tile extends Entity{
         );
 
         this._mesh.material = new StandardMaterial('TILE-MESH-MATERIAL', scene);
-        if (this._mesh.material instanceof StandardMaterial) this._mesh.material.diffuseColor = Color3.Random();
+        if (this._mesh.material instanceof StandardMaterial) this._mesh.material.diffuseColor = 
+            (this.tileType === 'track') 
+            ? new Color3(0.15, 0.15, 0.15) 
+            : (this.tileType === 'river')
+            ? new Color3(0.5, 0.75, 0.85)
+            : new Color3(0.6, 0.85, 0.5);
 
         this.collisionType = (this.tileType === 'river') ? 'dynamic' : 'none';
     }
 
     public onEnterScene(_scene: BaseScene): void {
-        const N_ENTITIES_TO_ADD = Math.floor(5 * Math.random());
+        const N_ENTITIES_TO_ADD = 1 + Math.floor(2 * Math.random());
 
         const TileFactory = this.isEmpty
             ? EmptyTileFactory

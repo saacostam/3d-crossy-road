@@ -13,9 +13,9 @@ export const NatureTileFactory: TileFactory = (scene: BaseScene, amount: number,
     const MIN = tile._mesh.position.z - tile.depth/2;
     const MAX = tile._mesh.position.z + tile.depth/2;
 
-    const z = MIN + ((MAX - MIN) * Math.random());
-    
     for (let iter = 0; iter < amount; iter++){
+        const z = MIN + ((MAX - MIN) * Math.random());
+
         const NatureObjectConstructor = natureTileObjectsConstructors[Math.floor(natureTileObjectsConstructors.length * Math.random())];
         const entity = new NatureObjectConstructor(scene, {
             x: tile._mesh.position.x,

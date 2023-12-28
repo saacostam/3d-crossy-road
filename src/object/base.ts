@@ -1,13 +1,15 @@
 import { Mesh } from "@babylonjs/core";
 
 import { Game } from "../app";
-import { CollisionType } from "../types";
+import { AnchoredChildMesh, CollisionType } from "../types";
 import { BaseScene } from "../scene";
 
 export class Entity {
     public _mesh: Mesh;
     public isAlive: boolean = true;
     public collisionType: CollisionType = 'none';
+
+    public meshChildren: AnchoredChildMesh[] = [];
 
     constructor(public scene: BaseScene){
         this._mesh = new Mesh('BASE-MESH');
