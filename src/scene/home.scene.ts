@@ -96,7 +96,7 @@ export class HomeScene extends BaseScene{
     private updateCamera: UpdateHandler = (_: Game, __: number) => {
         this.farthestAwayPlayerXCoordinate = Math.max(this.farthestAwayPlayerXCoordinate, this.player._mesh.position.x);
 
-        const CAMERA_OFFSET = new Vector3(-90, 90, -32);
+        const CAMERA_OFFSET = new Vector3(-90, 90, -32).scale(4);
         const TARGET_CURR_POSITION = this.player.mesh.position.multiply(new Vector3(1, 0, 1));
         TARGET_CURR_POSITION.x = Math.max(this.farthestAwayPlayerXCoordinate, TARGET_CURR_POSITION.x);
         this.camera.position = TARGET_CURR_POSITION.add(CAMERA_OFFSET);
@@ -130,6 +130,16 @@ export class HomeScene extends BaseScene{
 
                 this.closestLimitXCoordinate = x;
             }else break;
+        }
+
+        while (this.sideLimits[0]._mesh.position.x < this.closestLimitXCoordinate){
+            const sideLimit = this.sideLimits.shift();
+            sideLimit?.kill();
+        }
+
+        while (this.gameAreaLimits[0]._mesh.position.x < this.closestLimitXCoordinate){
+            const limit = this.gameAreaLimits.shift();
+            limit?.kill();
         }
     }
 

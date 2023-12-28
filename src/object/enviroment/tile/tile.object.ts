@@ -81,4 +81,13 @@ export class Tile extends Entity{
     public update(_game: Game, _delta: number): void {
         this.objects.forEach(entity => entity.update(_game, _delta));
     }
+
+    public kill(): void {
+        super.kill();
+        this.objects.forEach(obj => {
+            this.scene.removeMesh(obj._mesh);
+            obj.kill();
+        });
+        this.objects = [];
+    }
 }
