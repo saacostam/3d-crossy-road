@@ -16,8 +16,8 @@ export class HomeScene extends BaseScene{
         super(app, options);
 
         this.player = new Player(this, {
-            position: new Vector3(0, BASE_SIZE/4, 0),
-            size: BASE_SIZE/2,
+            position: new Vector3(-2*BASE_SIZE, BASE_SIZE/4, 0),
+            size: BASE_SIZE/4,
         });
         this.addEntity(this.player);
 
