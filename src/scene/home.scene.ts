@@ -9,7 +9,7 @@ import { BASE_SIZE } from "../config";
 type HomeSceneOptions = BaseSceneOptions;
 
 export class HomeScene extends BaseScene{
-    private player: Player;
+    private player!: Player;
     public tiles: MetaTile[] = [];
 
     private static TILE_DEPTH = BASE_SIZE * 20;
@@ -25,6 +25,10 @@ export class HomeScene extends BaseScene{
         super(app, options);
         this.clearColor = new Color4(0.5, 0.75, 0.85);
 
+        this.setup();
+    }
+
+    private setup(){
         this.player = new Player(this, {
             position: new Vector3(-BASE_SIZE, BASE_SIZE/4, 0),
             size: BASE_SIZE/4,
@@ -44,6 +48,25 @@ export class HomeScene extends BaseScene{
             new Vector3(0.5, -1, -0.5),
             this,
         )
+    }
+
+    public restart(){
+        this.cleanup();
+        this.setup();
+    }
+
+    private cleanup(){
+        this.player.kill();
+        this.tiles.forEach(tile => tile.tile.kill());
+        this.sideLimits.forEach(limit => limit.kill());
+        this.gameAreaLimits.forEach(limit => limit.kill());
+
+        this.tiles = [];
+        this.sideLimits = [];
+        this.gameAreaLimits = [];
+        this.farthestAwayPlayerXCoordinate = 0;
+        this.farthestAwayTileXCoordinate = 0;
+        this.closestLimitXCoordinate = -10000;
     }
 
     private addTile(x: number, isEmpty: boolean = false){

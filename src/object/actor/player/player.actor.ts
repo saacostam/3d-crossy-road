@@ -4,11 +4,12 @@ import { Entity } from "../..";
 import { Game } from "../../../app";
 import { BASE_SIZE } from "../../../config";
 import { TiledSceneNavigator } from "../../../handler";
-import { BaseScene, HomeScene } from "../../../scene";
+import { HomeScene } from "../../../scene";
 import { Direction, StateMachine } from "../../../types";
 import { Curve, CurveUtil, DirectionUtil } from "../../../util";
 
 import { PlayerStateMachineState, PlayerStateMachineTransition, getPlayerStateMachine } from "./player.state-machine";
+import { DeathParticlesGroup } from "../../particles-group";
 
 type PlayerOptions = {
     size?: number,
@@ -34,9 +35,9 @@ export class Player extends Entity{
     private platformCenterOffset: Vector3 | undefined;
     private tiledSceneNavigator: TiledSceneNavigator | undefined;
 
-    public scene: BaseScene;
+    public scene: HomeScene;
 
-    constructor(scene: BaseScene, options?: PlayerOptions){
+    constructor(scene: HomeScene, options?: PlayerOptions){
         super(scene);
         this.scene = scene;
 
@@ -190,14 +191,14 @@ export class Player extends Entity{
 
     private handleIdle(_game: Game, _delta: number){
         const metaTile = this.tiledSceneNavigator?.getClosestTile(this._mesh.position._x, this.depth);
-        if (metaTile?.tile.collisionType === 'dynamic' && metaTile.x > 0) _game.engine.stopRenderLoop();
+        if (metaTile?.tile.collisionType === 'dynamic' && metaTile.x > 0) this.handleDeath();
     }
 
     public onCollision(_other: Entity, _game: Game): void {
         if (_game.engine.getFps() === Infinity) return;
 
         if (_other.collisionType === 'static') this.stateMachine.transition('move-back');
-        if (_other.collisionType === 'dynamic') _game.engine.stopRenderLoop();
+        if (_other.collisionType === 'dynamic' && this.scene) this.handleDeath();
         if (_other.collisionType === 'platform') {
             if (this.stateMachine.state() === 'idle'){
                 this.platform = _other;
@@ -222,6 +223,23 @@ export class Player extends Entity{
                 mesh.position = this._mesh.position.add(newAnchorToParent);
             }
         )
+    }
+
+    private handleDeath(){
+        if (this.stateMachine.state() === 'dead') return;
+        this.stateMachine.transition('die');
+
+        if (this.mesh.material) this.mesh.material.alpha = 0;
+        this.meshChildren.forEach(child => {
+            if (child.mesh.material) child.mesh.material.alpha = 0;
+        });
+
+        const start = this._mesh.position.clone();
+        const particlesGroup = new DeathParticlesGroup(this.scene, {
+            start: start,
+        });
+
+        this.scene.addEntity(particlesGroup);
     }
 
     public update(_game: Game, _delta: number): void {
@@ -256,6 +274,8 @@ export class Player extends Entity{
             case 'moving':
             case 'moving-back':
                 this.updateJump(_game, _delta);
+                break;
+            case 'dead':
                 break;
         }
 
