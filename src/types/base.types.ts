@@ -1,4 +1,4 @@
-import { Vector3 } from "@babylonjs/core";
+import { Mesh, Vector3 } from "@babylonjs/core";
 import { Game } from "../app";
 import { Tile } from "../object";
 
@@ -33,4 +33,9 @@ export type DynamicEntityOptions = {
 export type MetaTile = {
     tile: Tile,
     x: number;
+}
+
+export type AnchoredChildMesh = {
+    mesh: Mesh;
+    anchorToParent: Vector3;
 }

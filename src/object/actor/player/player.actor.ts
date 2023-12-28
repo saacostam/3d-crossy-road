@@ -1,4 +1,4 @@
-import { Color3, MeshBuilder, StandardMaterial, Vector3 } from "@babylonjs/core";
+import { Color3, MeshBuilder, StandardMaterial, Vector3, Quaternion } from "@babylonjs/core";
 
 import { Entity } from "../..";
 import { Game } from "../../../app";
@@ -6,7 +6,7 @@ import { BASE_SIZE } from "../../../config";
 import { TiledSceneNavigator } from "../../../handler";
 import { BaseScene, HomeScene } from "../../../scene";
 import { Direction, StateMachine } from "../../../types";
-import { Curve, CurveUtil } from "../../../util";
+import { Curve, CurveUtil, DirectionUtil } from "../../../util";
 
 import { PlayerStateMachineState, PlayerStateMachineTransition, getPlayerStateMachine } from "./player.state-machine";
 
@@ -23,7 +23,10 @@ export class Player extends Entity{
 
     private stateMachine: StateMachine<PlayerStateMachineState, PlayerStateMachineTransition>;
     private jumpCurrDistance: number = 0;
+
     private direction: Direction = 'top';
+
+    private width: number;
     private depth: number;
     private height: number;
 
@@ -38,20 +41,93 @@ export class Player extends Entity{
         this.scene = scene;
 
         const SIZE = options?.size ? options.size : BASE_SIZE;
+        const COLOR_RED = Color3.Red();
+
+        this.width = SIZE;
+        this.height = SIZE*2;
+        this.depth = SIZE;
 
         this.mesh = MeshBuilder.CreateBox(
             'PLAYER-MESH', 
             {
-                size: SIZE,
-            }
+                height: this.height,
+                depth: this.depth,
+                width: this.width,
+            },
+            scene,
         );
-        this.height = SIZE;
-        this.depth = SIZE;
 
         if (options?.position) this.mesh.position = options.position;
 
         this.mesh.material = new StandardMaterial('PLAYER-MESH-MATERIAL', scene);
-        if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.Blue();
+        if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.White();
+
+        // Mesh - Children
+        const feathers = MeshBuilder.CreateBox(
+            'PLAYER-MESH', 
+            {
+                height: this.height/2,
+                depth: this.depth,
+                width: this.width/2,
+            },
+            scene,
+        );
+        feathers.material = new StandardMaterial('PLAYER-MESH-MATERIAL', scene);
+        if (feathers.material instanceof StandardMaterial) feathers.material.diffuseColor = Color3.White();
+        this.meshChildren.push({
+            mesh: feathers,
+            anchorToParent: new Vector3(-this.width*3/4, -this.height/4, 0),
+        });
+
+        const comb = MeshBuilder.CreateBox(
+            'PLAYER-MESH', 
+            {
+                height: this.height/8,
+                depth: this.depth/4,
+                width: this.width/2,
+            },
+            scene,
+        );
+        comb.material = new StandardMaterial('PLAYER-MESH-MATERIAL', scene);
+        if (comb.material instanceof StandardMaterial) comb.material.diffuseColor = COLOR_RED;
+        this.meshChildren.push({
+            mesh: comb,
+            anchorToParent: new Vector3(0, this.height*9/16, 0),
+        });
+
+        const beak = MeshBuilder.CreateBox(
+            'PLAYER-MESH', 
+            {
+                height: this.height/8,
+                depth: this.depth/2,
+                width: this.width/4,
+            },
+            scene,
+        );
+        beak.material = new StandardMaterial('PLAYER-MESH-MATERIAL', scene);
+        if (beak.material instanceof StandardMaterial) beak.material.diffuseColor = new Color3(0.95, 0.65, 0.2);
+        this.meshChildren.push({
+            mesh: beak,
+            anchorToParent: new Vector3(this.width*5/8, this.height/4, 0),
+        });
+
+        const wattle = MeshBuilder.CreateBox(
+            'PLAYER-MESH', 
+            {
+                height: this.height/8,
+                depth: this.depth/4,
+                width: this.width/4,
+            },
+            scene,
+        );
+        wattle.material = new StandardMaterial('PLAYER-MESH-MATERIAL', scene);
+        if (wattle.material instanceof StandardMaterial) wattle.material.diffuseColor = COLOR_RED;
+        this.meshChildren.push({
+            mesh: wattle,
+            anchorToParent: new Vector3(this.width*5/8, this.height/8, 0),
+        });
+
+        // State
 
         this.stateMachine = getPlayerStateMachine();
 
@@ -127,6 +203,22 @@ export class Player extends Entity{
         };
     }
 
+    private updateMesh(_: Game, __: number){
+        const ROTATION = DirectionUtil.findRotationAngleBasedOnDirection(this.direction);
+        const ROTATION_VECTOR = new Vector3(0, ROTATION, 0);
+
+        this._mesh.rotation = ROTATION_VECTOR;
+        this.meshChildren.forEach(
+            ({mesh, anchorToParent}) => {
+                mesh.rotation = ROTATION_VECTOR;
+
+                const rotationQuaternion = Quaternion.FromEulerAngles(0, ROTATION, 0);
+                const newAnchorToParent = anchorToParent.applyRotationQuaternion(rotationQuaternion);
+                mesh.position = this._mesh.position.add(newAnchorToParent);
+            }
+        )
+    }
+
     public update(_game: Game, _delta: number): void {
         if (_game.engine.getFps() === Infinity) return;
 
@@ -161,5 +253,7 @@ export class Player extends Entity{
                 this.updateJump(_game, _delta);
                 break;
         }
+
+        this.updateMesh(_game, _delta)
     }
 }
