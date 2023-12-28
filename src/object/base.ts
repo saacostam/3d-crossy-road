@@ -24,6 +24,7 @@ export class Entity {
     kill(){
         this.isAlive = false;
         if (this.mesh) this.scene.removeMesh(this.mesh);
+        this.meshChildren.forEach(child => this.scene.removeMesh(child.mesh));
     }
 
     set mesh(newMeshValue: Mesh){

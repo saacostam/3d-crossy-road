@@ -62,7 +62,7 @@ export class Tile extends Entity{
     }
 
     public onEnterScene(_scene: BaseScene): void {
-        const N_ENTITIES_TO_ADD = 1 + Math.floor(2 * Math.random());
+        const N_ENTITIES_TO_ADD = 1 + Math.floor(5 * Math.random());
 
         const TileFactory = this.isEmpty
             ? EmptyTileFactory
@@ -80,5 +80,14 @@ export class Tile extends Entity{
 
     public update(_game: Game, _delta: number): void {
         this.objects.forEach(entity => entity.update(_game, _delta));
+    }
+
+    public kill(): void {
+        super.kill();
+        this.objects.forEach(obj => {
+            this.scene.removeMesh(obj._mesh);
+            obj.kill();
+        });
+        this.objects = [];
     }
 }

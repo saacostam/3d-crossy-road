@@ -63,6 +63,8 @@ export class Player extends Entity{
         if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = Color3.White();
 
         // Mesh - Children
+        const OUT_OF_SCENE = Vector3.Down().scale(30);
+
         const feathers = MeshBuilder.CreateBox(
             'PLAYER-MESH', 
             {
@@ -72,6 +74,7 @@ export class Player extends Entity{
             },
             scene,
         );
+        feathers.position = OUT_OF_SCENE;
         feathers.material = new StandardMaterial('PLAYER-MESH-MATERIAL', scene);
         if (feathers.material instanceof StandardMaterial) feathers.material.diffuseColor = Color3.White();
         this.meshChildren.push({
@@ -88,6 +91,7 @@ export class Player extends Entity{
             },
             scene,
         );
+        comb.position = OUT_OF_SCENE;
         comb.material = new StandardMaterial('PLAYER-MESH-MATERIAL', scene);
         if (comb.material instanceof StandardMaterial) comb.material.diffuseColor = COLOR_RED;
         this.meshChildren.push({
@@ -104,6 +108,7 @@ export class Player extends Entity{
             },
             scene,
         );
+        beak.position = OUT_OF_SCENE;
         beak.material = new StandardMaterial('PLAYER-MESH-MATERIAL', scene);
         if (beak.material instanceof StandardMaterial) beak.material.diffuseColor = new Color3(0.95, 0.65, 0.2);
         this.meshChildren.push({
@@ -120,6 +125,7 @@ export class Player extends Entity{
             },
             scene,
         );
+        wattle.position = OUT_OF_SCENE;
         wattle.material = new StandardMaterial('PLAYER-MESH-MATERIAL', scene);
         if (wattle.material instanceof StandardMaterial) wattle.material.diffuseColor = COLOR_RED;
         this.meshChildren.push({
@@ -128,7 +134,6 @@ export class Player extends Entity{
         });
 
         // State
-
         this.stateMachine = getPlayerStateMachine();
 
         this.stateMachine.registerCallback('moving', () => this.jumpCurrDistance = 0);

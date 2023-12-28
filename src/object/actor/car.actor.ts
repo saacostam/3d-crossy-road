@@ -56,11 +56,14 @@ export class Car extends Entity{
         if (this.mesh.material instanceof StandardMaterial) this.mesh.material.diffuseColor = COLOR;
 
         // Mesh - Children
+        const OUT_OF_SCENE = Vector3.Down().scale(30);
+
         const roof = MeshBuilder.CreateBox('CAR-MESH', {
             width: this.width,
             depth: this.depth/2,
             height: this.height/2,
         }, scene);
+        roof.position = OUT_OF_SCENE;
         roof.material = new StandardMaterial('CAR-MESH-MATERIAL', scene);
         if (roof.material instanceof StandardMaterial) roof.material.diffuseColor = COLOR; 
         this.meshChildren.push({
@@ -72,6 +75,7 @@ export class Car extends Entity{
             height: this.width*1.1,
             diameter: this.height*5/8,
         })
+        frontWheels.position = OUT_OF_SCENE;
         frontWheels.rotation = new Vector3(0, 0, Math.PI/2);
         frontWheels.material = new StandardMaterial('CAR-MESH-MATERIAL', scene);
         if (frontWheels.material instanceof StandardMaterial) frontWheels.material.diffuseColor = WHEEL_COLOR; 
@@ -84,6 +88,7 @@ export class Car extends Entity{
             height: this.width*1.1,
             diameter: this.height*5/8,
         })
+        backWheels.position = OUT_OF_SCENE;
         backWheels.rotation = new Vector3(0, 0, Math.PI/2);
         backWheels.material = new StandardMaterial('CAR-MESH-MATERIAL', scene);
         if (backWheels.material instanceof StandardMaterial) backWheels.material.diffuseColor = WHEEL_COLOR; 
