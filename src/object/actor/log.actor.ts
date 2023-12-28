@@ -6,9 +6,7 @@ import { BaseScene } from "../../scene";
 import { Game } from "../../app";
 import { PathMap, PathUtil } from "../../util";
 
-type LogOptions = DynamicEntityOptions & {
-    velocity: number;
-};
+type LogOptions = DynamicEntityOptions;
 
 export class Log extends Entity{
     private direction: Direction;
@@ -36,7 +34,7 @@ export class Log extends Entity{
         this.direction = options.direction;
         this.start = options.start;
         this.end = options.end;
-        this.pathProgress = Math.random();
+        this.pathProgress = options.pathProgress;
 
         this.velocity = options.velocity;
         this.pathMap = PathUtil.useLinearPath({

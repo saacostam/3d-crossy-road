@@ -13,6 +13,7 @@ export class Car extends Entity{
     private start: Vector3;
     private end: Vector3;
     private pathProgress: number;
+    private velocity: number;
 
     private width: number;
     private height: number;
@@ -27,13 +28,12 @@ export class Car extends Entity{
         this.height = options.height;
         this.depth = options.depth;
 
-        options.start.y += this.height/8;
-        options.end.y += this.height/8;
-
         this.direction = options.direction;
         this.start = options.start;
         this.end = options.end;
-        this.pathProgress = Math.random();
+
+        this.pathProgress = options.pathProgress;
+        this.velocity = options.velocity;
 
         this.pathMap = PathUtil.useLinearPath({
             start: this.start,
@@ -100,7 +100,7 @@ export class Car extends Entity{
 
     public update(_game: Game, _delta: number): void {
         const MODIFIER = (this.direction === 'right') ? 1 : -1;
-        const DELTA_MOVEMENT = 0.00015 * _delta * MODIFIER;
+        const DELTA_MOVEMENT = this.velocity * _delta * MODIFIER;
         this.pathProgress = ((this.pathProgress + DELTA_MOVEMENT * MODIFIER) + 1) % 1;
 
         this._mesh.position = this.pathMap(this.pathProgress);

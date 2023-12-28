@@ -11,11 +11,11 @@ const trackTileObjectsConstructors = [
     Log,
 ]
 
-export const RiverTileFactory: TileFactory = (scene: BaseScene, _: number, tile: Tile): Entity[] => {
+export const RiverTileFactory: TileFactory = (scene: BaseScene, amount: number, tile: Tile): Entity[] => {
     const factoryEntityProducts: Entity[] = [];
 
     const direction: Direction = Math.random() < 0.5 ? 'right' : 'left';
-    const velocity = Math.random() < 0.5 ? 0.00007 : 0.00009;
+    const velocity = 0.00007 + (Math.random() * 0.00005);
 
     const MIN = tile._mesh.position.z - tile.depth/2;
     const MAX = tile._mesh.position.z + tile.depth/2;
@@ -26,19 +26,25 @@ export const RiverTileFactory: TileFactory = (scene: BaseScene, _: number, tile:
     const start = new Vector3( tile._mesh.position.x, -HEIGHT/2, (direction === 'right') ? MIN : MAX);
     const end = new Vector3( tile._mesh.position.x, -HEIGHT/2, (direction === 'right') ? MAX : MIN);
 
+    let currPathProgress = Math.random();
     const TrackObjectConstructor = trackTileObjectsConstructors[Math.floor(trackTileObjectsConstructors.length * Math.random())];
+    
+    for (let iter = 0; iter <= amount; iter++){
+        const entity = new TrackObjectConstructor(scene, {
+            direction: direction,
+            start: start,
+            end: end,
+            width: SIZE,
+            depth: SIZE*4,
+            height: HEIGHT,
+            velocity: velocity,
+            pathProgress: currPathProgress,
+        });
+    
+        factoryEntityProducts.push(entity);
 
-    const entity = new TrackObjectConstructor(scene, {
-        direction: direction,
-        start: start,
-        end: end,
-        width: SIZE,
-        depth: SIZE*4,
-        height: HEIGHT,
-        velocity: velocity,
-    });
-
-    factoryEntityProducts.push(entity);
+        currPathProgress = (currPathProgress + 1/amount) % 1;
+    }
 
     return factoryEntityProducts;
 }
