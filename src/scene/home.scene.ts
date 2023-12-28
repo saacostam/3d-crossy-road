@@ -12,6 +12,8 @@ export class HomeScene extends BaseScene{
     private player: Player;
     public tiles: MetaTile[] = [];
 
+    private farthestAwayTileXCoordinate: number = 0;
+
     constructor(public app: Game, options?: HomeSceneOptions){
         super(app, options);
 
@@ -36,24 +38,32 @@ export class HomeScene extends BaseScene{
         )
     }
 
+    private addTile(x: number, isEmpty: boolean = false){
+        const TILE_DEPTH = BASE_SIZE * 20;
+
+        const tile = new Tile(this, {
+            depth: TILE_DEPTH,
+            width: BASE_SIZE,
+            z: 0,
+            x: x,
+            isEmpty: isEmpty,
+        });
+        
+        this.tiles.push({
+            tile: tile,
+            x: x,
+        });
+        this.addEntity(tile);
+
+        this.farthestAwayTileXCoordinate = x;
+    }
+
     private setUpInitialTiles(){
         const NUMBER_OF_TILES_ON_EACH_SIDE_FROM_ORIGIN = 5;
-        for (let i = -NUMBER_OF_TILES_ON_EACH_SIDE_FROM_ORIGIN; i < NUMBER_OF_TILES_ON_EACH_SIDE_FROM_ORIGIN * 5; i ++){
+
+        for (let i = -NUMBER_OF_TILES_ON_EACH_SIDE_FROM_ORIGIN; i < NUMBER_OF_TILES_ON_EACH_SIDE_FROM_ORIGIN * 2; i ++){
             const x = i * BASE_SIZE;
-            
-            const tile = new Tile(this, {
-                depth: BASE_SIZE * 16,
-                width: BASE_SIZE,
-                z: 0,
-                x: x,
-                isEmpty: i <= 0,
-            });
-            
-            this.tiles.push({
-                tile: tile,
-                x: x,
-            });
-            this.addEntity(tile);
+            this.addTile(x, i <= 0);
         }
 
     }
@@ -65,8 +75,16 @@ export class HomeScene extends BaseScene{
         this.camera.setTarget(TARGET_CURR_POSITION);
     }
 
+    private handleTileLifeCycle: UpdateHandler = (_: Game, __: number) => {
+        const HORIZON_DISTANCE = BASE_SIZE * 15;
+        if ((this.farthestAwayTileXCoordinate - this.player.mesh.position.x) < HORIZON_DISTANCE){
+            this.addTile(this.farthestAwayTileXCoordinate + BASE_SIZE, false);
+        }
+    }
+
     private updateHandlers: UpdateHandler[] = [
-        this.updateCamera
+        this.updateCamera,
+        this.handleTileLifeCycle,
     ];
 
     update(delta: number){
