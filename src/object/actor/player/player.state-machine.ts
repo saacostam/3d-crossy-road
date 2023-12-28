@@ -1,7 +1,7 @@
 import { IndependentCallback, StateMachine } from "../../../types";
 
-export type PlayerStateMachineState = 'moving' | 'idle' | 'moving-back' | 'on-platform';
-export type PlayerStateMachineTransition = 'move' | 'stop' | 'move-back' | 'bind-to-platform';
+export type PlayerStateMachineState = 'moving' | 'idle' | 'moving-back' | 'on-platform' | 'dead';
+export type PlayerStateMachineTransition = 'move' | 'stop' | 'move-back' | 'bind-to-platform' | 'die';
 
 export const getPlayerStateMachine = (): StateMachine<
     PlayerStateMachineState,
@@ -28,6 +28,9 @@ export const getPlayerStateMachine = (): StateMachine<
                             break;
                         case 'move-back':
                             break;
+                        case 'die':
+                            currentState = 'dead';
+                            break;
                     }
                     break;
                 case 'moving':
@@ -43,6 +46,9 @@ export const getPlayerStateMachine = (): StateMachine<
                             break;
                         case 'bind-to-platform':
                             break;
+                        case 'die':
+                            currentState = 'dead';
+                            break;
                     }
                     break;
                 case 'moving-back':
@@ -55,6 +61,9 @@ export const getPlayerStateMachine = (): StateMachine<
                             break;
                         case 'move':
                         case 'bind-to-platform':
+                            break;
+                        case 'die':
+                            currentState = 'dead';
                             break;
                     }
                     break;
@@ -69,7 +78,13 @@ export const getPlayerStateMachine = (): StateMachine<
                         case 'move-back':
                         case 'bind-to-platform':
                             break;
+                        case 'die':
+                            currentState = 'dead';
+                            break;
                     }
+                    break;
+                case 'dead':
+                    break;
             }
 
             const CURR_STATE = currentState;
