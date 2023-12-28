@@ -62,7 +62,7 @@ export class Tile extends Entity{
     }
 
     public onEnterScene(_scene: BaseScene): void {
-        const N_ENTITIES_TO_ADD = 1 + Math.floor(2 * Math.random());
+        const N_ENTITIES_TO_ADD = 1 + Math.floor(3 * Math.random());
 
         const TileFactory = this.isEmpty
             ? EmptyTileFactory

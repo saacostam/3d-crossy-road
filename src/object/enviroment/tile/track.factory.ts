@@ -16,6 +16,7 @@ export const TrackTileFactory: TileFactory = (scene: BaseScene, amount: number, 
 
     const direction: Direction = Math.random() < 0.5 ? 'right' : 'left';
 
+    amount = Math.min(2, amount);
     const MIN = tile._mesh.position.z - tile.depth/2;
     const MAX = tile._mesh.position.z + tile.depth/2;
 
