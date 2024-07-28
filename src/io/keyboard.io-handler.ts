@@ -6,28 +6,30 @@ type RichKeyboardEventConfig = {
 class RichKeyboardEvent {
     public key: string;
     public used: boolean;
-    
-    constructor(props: RichKeyboardEventConfig){
+
+    constructor(props: RichKeyboardEventConfig) {
         this.key = props.key;
         this.used = props.used || false;
     }
 }
 
-export class KeyboardHandler{
-    private singletonInstance: KeyboardHandler | null = null;
+export class KeyboardHandler {
+    private singletonInstance: KeyboardHandler | null = null;
     private keyState: Map<string, RichKeyboardEvent> = new Map<string, RichKeyboardEvent>();
 
     private keyDownHandler = (e: KeyboardEvent) => {
-        const {key} = e;
-        this.keyState.set(key, new RichKeyboardEvent({key}));
+        e.preventDefault();
+        const { key } = e;
+        this.keyState.set(key, new RichKeyboardEvent({ key }));
     }
 
     private keyUpHandler = (e: KeyboardEvent) => {
-        const {key} = e;
+        e.preventDefault();
+        const { key } = e;
         if (this.keyState.has(key)) this.keyState.delete(key);
     }
 
-    constructor(){
+    constructor() {
         if (!!this.singletonInstance) return this.singletonInstance;
 
         this.keyState = new Map<string, RichKeyboardEvent>();
@@ -38,21 +40,21 @@ export class KeyboardHandler{
         this.singletonInstance = this;
     }
 
-    public clear(){
+    public clear() {
         removeEventListener('keydown', this.keyDownHandler);
         removeEventListener('keyup', this.keyUpHandler);
     }
 
-    public wasPressedOnce(key: string){
+    public wasPressedOnce(key: string) {
         let wasPressed = false;
-        if (this.keyState.has(key)){
+        if (this.keyState.has(key)) {
             wasPressed = !(this.keyState.get(key)?.used);
-            this.keyState.set(key, new RichKeyboardEvent({key, used: true}));
+            this.keyState.set(key, new RichKeyboardEvent({ key, used: true }));
         }
         return wasPressed;
     }
 
-    public isBeingPressed(key: string){
+    public isBeingPressed(key: string) {
         return !!this.keyState.has(key);
     }
 }
