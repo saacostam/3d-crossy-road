@@ -25,3 +25,5 @@ app.runRenderLoop();
 window.addEventListener("resize", () => {
     engine.resize();
 });
+
+document.addEventListener('keydown', e => e.preventDefault());
